@@ -875,17 +875,24 @@ void cEffect_WaveGravity::Reset()
 
 cEffectHandler::cEffectHandler(cInit *apInit)  : iUpdateable("EffectHandler")
 {
+    Log("\n");
 	mpInit = apInit;
 	mpDrawer = mpInit->mpGame->GetGraphics()->GetDrawer();
-
+    Log("Init flash:");
 	mpFlash = hplNew( cEffect_Flash,(mpInit, mpDrawer) );
+    Log("OK\nInit gravity:");
 	mpWaveGravity = hplNew( cEffect_WaveGravity,(mpInit) );
+    Log("OK\nInit subtitle:");
 	mpSubTitle = hplNew( cEffect_SubTitle,(mpInit,mpDrawer) );
+    Log("OK\nInit DoF:");
 	mpDepthOfField = hplNew( cEffect_DepthOfField,(mpInit) );
+    Log("OK\nInit save effect:");
 	mpSaveEffect = hplNew( cEffect_SaveEffect,(mpInit,mpDrawer) );
+    Log("OK\nInit shake:");
 	mpShakeScreen = hplNew( cEffect_ShakeScreen,(mpInit) );
+    Log("OK\nInit underwater:");
 	mpUnderwater = hplNew( cEffect_Underwater,(mpInit,mpDrawer) );
-
+    Log("OK\n");
 	Reset();
 }
 

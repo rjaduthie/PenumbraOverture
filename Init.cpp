@@ -151,6 +151,7 @@ bool CheckSupport(cInit *apInit)
 	//Try compiling vertex shader
 	Log("Trying to load vertex program!\n");
 	iGpuProgram *pTestVtxProg = pLowLevelGraphics->CreateGpuProgram("Test",eGpuProgramType_Vertex);
+	// TODO: does this look up the resource manager, or open the file directly?
 	if(	pTestVtxProg->CreateFromFile("core/programs/Fallback01_Diffuse_Light_p1_vp.cg","main")==false)
 	{
 		Log("Did not succeed!\n");
@@ -283,8 +284,8 @@ bool cInit::Init(tString asCommandLine)
 	// LOG FILE SETUP /////////////////////
 	SetLogFile(sPersonalDir+PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("hpl.log"));
 	SetUpdateLogFile(sPersonalDir+PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("hpl_update.log"));
+    Log("-------- THE HPL ENGINE LOG ------------\n\n");
 
-	
 	// MAIN INIT /////////////////////
 	
 	//Check for what settings file to use.
@@ -326,7 +327,7 @@ bool cInit::Init(tString asCommandLine)
 
 	mvScreenSize.x = mpConfig->GetInt("Screen","Width",800);
 	mvScreenSize.y = mpConfig->GetInt("Screen","Height",600);
-	mbFullScreen = mpConfig->GetBool("Screen", "FullScreen", true);
+	mbFullScreen = mpConfig->GetBool("Screen", "FullScreen", false);
 	mbVsync = mpConfig->GetBool("Screen", "Vsync", false);
 	mbLogResources = mpConfig->GetBool("Debug", "LogResources", false);
 	mbDebugInteraction = mpConfig->GetBool("Debug", "DebugInteraction", false);
@@ -421,7 +422,6 @@ bool cInit::Init(tString asCommandLine)
 
 	pSetUp = hplNew( cSDLGameSetup, () );
 	mpGame = hplNew( cGame, ( pSetUp,Vars) );
-    
 #ifdef  TIMELIMIT
 	CheckTimeLimit();
 #endif
@@ -453,12 +453,12 @@ bool cInit::Init(tString asCommandLine)
 	// LANGUAGE ////////////////////////////////
 	mpGame->GetResources()->SetLanguageFile(msLanguageFile);
 
-	Log("Initializing "PRODUCT_NAME"\n  Version\t"PRODUCT_VERSION"\n  Date\t"PRODUCT_DATE"\n");
+	Log("Initializing " PRODUCT_NAME"\n  Version\t" PRODUCT_VERSION"\n  Date\t" PRODUCT_DATE"\n");
 	//////////////////////////////////////////////7
 	// Check if computer supports game
 	if(CheckSupport(this)==false) return false;
 
-	
+    Log("Adding loaders...");
 	//Add loaders
 	mpGame->GetResources()->AddEntity3DLoader(hplNew( cEntityLoader_GameObject,("Object",this)) );
 	mpGame->GetResources()->AddEntity3DLoader(hplNew( cEntityLoader_GameItem,("Item",this)) );
@@ -478,23 +478,34 @@ bool cInit::Init(tString asCommandLine)
 	mpGame->GetResources()->AddArea3DLoader(hplNew( cAreaLoader_GameLiquidArea,("liquid",this)) );
 	mpGame->GetResources()->AddArea3DLoader(hplNew( cAreaLoader_GameStickArea,("stick",this)) );
 #endif
+    Log("OK\n");
 
-		
+	Log("Create first loading screen...");
 	/// FIRST LOADING SCREEN ////////////////////////////////////
 	mpGraphicsHelper = hplNew( cGraphicsHelper, (this) );
+	Log("OK\n");
+	Log("Draw loading screen...");
 	mpGraphicsHelper->DrawLoadingScreen("");
+    Log("OK\n");
 
 	// SOUND ////////////////////////////////
+    Log("Set sound volume...");
 	mpGame->GetSound()->GetLowLevel()->SetVolume(mpConfig->GetFloat("Sound","Volume",1));
-		
+    Log("OK\n");
 	// PHYSICS INIT /////////////////////
+    Log("Load physics surface data...");
 	mpGame->GetPhysics()->LoadSurfaceData("materials.cfg", mpGame->GetHaptic());
-	
+    Log("OK\n");
 	// EARLY GAME INIT /////////////////////
+    Log("Create effects handler...");
 	mpEffectHandler = hplNew( cEffectHandler, (this) );
-	
+    Log("Create effects handler...OK\n");
 	// GRAPHICS INIT ////////////////////
+    Log("Graphics Init...");
+//    Log("Post effects set active...");
 	mpGame->GetGraphics()->GetRendererPostEffects()->SetActive(mbPostEffects);
+//    Log("OK\n");
+//    Log("Post effects set bloom...");
 	mpGame->GetGraphics()->GetRendererPostEffects()->SetBloomActive(mpConfig->GetBool("Graphics", "Bloom", true));
 	mpGame->GetGraphics()->GetRendererPostEffects()->SetBloomSpread(6);
 
@@ -514,6 +525,7 @@ bool cInit::Init(tString asCommandLine)
 	mpGame->GetGraphics()->GetRenderer3D()->SetShowShadows((eRendererShowShadows)mpConfig->GetInt("Graphics","Shadows",0));
 
 	mpGame->SetLimitFPS( mpConfig->GetBool("Graphics","LimitFPS",true));
+	Log("OK\n");
 
 	// HAPTIC INIT ////////////////////
 	if(mbHasHaptics)

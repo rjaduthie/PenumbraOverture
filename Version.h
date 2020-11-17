@@ -23,8 +23,8 @@
  * Add a revision history for ever release made (and commit so the magic version # gets updated)
  */
 #define PRODUCT_NAME "Penumbra: Overture"
-#define PRODUCT_VERSION "$Rev: 3013 $"
-#define PRODUCT_DATE "$Date: 2010-02-06 22:45:08 +0000 $"
+#define PRODUCT_VERSION "$Rev: 3013++ $"
+#define PRODUCT_DATE "$Date: 2020-xx-xx XX:XX:XX +0000 $"
 /* Revision History */
 /*
  * Linux: 2007-05-28 
